@@ -1,0 +1,130 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.app {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.board-wrapper {
+  flex-shrink: 0;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  width: min(108vmin, 540px);
+  height: min(108vmin, 540px);
+  border: 3px solid #333;
+  background: #fff;
+}
+
+.cell {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1rem, 4.5vmin, 2rem);
+  font-weight: 600;
+  color: #111;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  border-right: 1px solid #333;
+  border-bottom: 1px solid #333;
+}
+
+/* 右端列は盤の外枠に任せる */
+.cell:nth-child(9n) {
+  border-right: none;
+}
+
+/* 最下段は盤の外枠に任せる */
+.cell:nth-child(n + 73) {
+  border-bottom: none;
+}
+
+.cell:hover {
+  background: #f0f0f0;
+}
+
+.cell.selected {
+  outline: 3px solid #2563eb;
+  outline-offset: -3px;
+  z-index: 1;
+  background: #eff6ff;
+}
+
+.cell.block-right {
+  border-right: 3px solid #333;
+}
+
+.cell.block-bottom {
+  border-bottom: 3px solid #333;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.buttons button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid #333;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fff;
+  color: #111;
+  min-width: 120px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.buttons button:hover {
+  background: #333;
+  color: #fff;
+}
+
+.buttons button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.buttons button.solve {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.buttons button.solve:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.buttons button.solve:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
