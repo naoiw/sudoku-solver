@@ -94,6 +94,10 @@ body {
   border-bottom: 3px solid #333;
 }
 
+.cell.solver-filled {
+  color: #b91c1c;
+}
+
 .buttons {
   display: flex;
   flex-direction: column;
@@ -137,4 +141,10 @@ body {
 .buttons button.solve:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.solve-error {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #b91c1c;
 }

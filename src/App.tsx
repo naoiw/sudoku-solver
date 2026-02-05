@@ -1,8 +1,13 @@
 import { useState, useCallback, useEffect } from 'react'
 import { isCellInvalid, hasAnyInvalidCell } from './sudokuValidation'
+import { solve } from './sudokuSolver'
 
 const EMPTY_GRID: (number | null)[][] = Array.from({ length: 9 }, () =>
   Array(9).fill(null)
+)
+
+const EMPTY_SOLVER_FILLED: boolean[][] = Array.from({ length: 9 }, () =>
+  Array(9).fill(false)
 )
 
 type SelectedCell = { row: number; col: number } | null
@@ -11,14 +16,35 @@ function App() {
   const [grid, setGrid] = useState<(number | null)[][]>(() =>
     EMPTY_GRID.map((row) => [...row])
   )
+  const [solverFilledCells, setSolverFilledCells] = useState<boolean[][]>(() =>
+    EMPTY_SOLVER_FILLED.map((row) => [...row])
+  )
+  const [solveError, setSolveError] = useState<string | null>(null)
   const [selectedCell, setSelectedCell] = useState<SelectedCell>(null)
 
   const handleCellClick = useCallback((row: number, col: number) => {
     setSelectedCell({ row, col })
   }, [])
 
+  const handleSolve = useCallback(() => {
+    const solution = solve(grid)
+    if (solution !== null) {
+      setGrid(solution)
+      setSolverFilledCells(
+        grid.map((row, r) =>
+          row.map((_, c) => grid[r][c] === null && solution[r][c] != null)
+        )
+      )
+      setSolveError(null)
+    } else {
+      setSolveError('解が存在しません')
+    }
+  }, [grid])
+
   const handleReset = useCallback(() => {
     setGrid(EMPTY_GRID.map((row) => [...row]))
+    setSolverFilledCells(EMPTY_SOLVER_FILLED.map((row) => [...row]))
+    setSolveError(null)
     setSelectedCell(null)
   }, [])
 
@@ -29,9 +55,16 @@ function App() {
       if (key >= '1' && key <= '9') {
         e.preventDefault()
         const num = Number(key)
+        const row = selectedCell.row
+        const col = selectedCell.col
         setGrid((prev) => {
           const next = prev.map((r) => [...r])
-          next[selectedCell.row][selectedCell.col] = num
+          next[row][col] = num
+          return next
+        })
+        setSolverFilledCells((prev) => {
+          const next = prev.map((r) => [...r])
+          next[row][col] = false
           return next
         })
       }
@@ -48,7 +81,7 @@ function App() {
             row.map((value, colIndex) => (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                className={`cell ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''} ${isCellInvalid(grid, rowIndex, colIndex) ? 'invalid' : ''} ${colIndex === 2 || colIndex === 5 ? 'block-right' : ''} ${rowIndex === 2 || rowIndex === 5 ? 'block-bottom' : ''}`}
+                className={`cell ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''} ${isCellInvalid(grid, rowIndex, colIndex) ? 'invalid' : ''} ${solverFilledCells[rowIndex][colIndex] ? 'solver-filled' : ''} ${colIndex === 2 || colIndex === 5 ? 'block-right' : ''} ${rowIndex === 2 || rowIndex === 5 ? 'block-bottom' : ''}`}
                 role="gridcell"
                 aria-selected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
                 aria-invalid={isCellInvalid(grid, rowIndex, colIndex) ? true : undefined}
@@ -72,13 +105,19 @@ function App() {
           type="button"
           className="solve"
           disabled={hasAnyInvalidCell(grid)}
-          title={hasAnyInvalidCell(grid) ? '不正な入力があります' : '未実装'}
+          title={hasAnyInvalidCell(grid) ? '不正な入力があります' : '解を求める'}
+          onClick={handleSolve}
         >
           Solve
         </button>
         <button type="button" onClick={handleReset}>
           Reset
         </button>
+        {solveError != null && (
+          <p className="solve-error" role="alert">
+            {solveError}
+          </p>
+        )}
       </div>
     </div>
   )
