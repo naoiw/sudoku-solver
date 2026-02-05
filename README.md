@@ -1,6 +1,6 @@
 # sudoku-solver
 
-数独の盤面を入力し、Solve ボタンで解を表示する Web アプリです。
+数独の盤面を入力し、Solve ボタンで解を表示する Web アプリです。入力時はリアルタイムで重複チェックを行い、不正なマスは赤表示されます。不正なマスが1つでもある間は Solve ボタンは押せません。
 
 - **デモ**: [https://naoiw.github.io/sudoku-solver](https://naoiw.github.io/sudoku-solver)
 

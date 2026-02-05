@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
+import { isCellInvalid, hasAnyInvalidCell } from './sudokuValidation'
 
 const EMPTY_GRID: (number | null)[][] = Array.from({ length: 9 }, () =>
   Array(9).fill(null)
@@ -11,6 +12,7 @@ function App() {
     EMPTY_GRID.map((row) => [...row])
   )
   const [selectedCell, setSelectedCell] = useState<SelectedCell>(null)
+  const [lastEnteredCell, setLastEnteredCell] = useState<SelectedCell>(null)
 
   const handleCellClick = useCallback((row: number, col: number) => {
     setSelectedCell({ row, col })
@@ -19,6 +21,7 @@ function App() {
   const handleReset = useCallback(() => {
     setGrid(EMPTY_GRID.map((row) => [...row]))
     setSelectedCell(null)
+    setLastEnteredCell(null)
   }, [])
 
   useEffect(() => {
@@ -28,6 +31,7 @@ function App() {
       if (key >= '1' && key <= '9') {
         e.preventDefault()
         const num = Number(key)
+        setLastEnteredCell({ row: selectedCell.row, col: selectedCell.col })
         setGrid((prev) => {
           const next = prev.map((r) => [...r])
           next[selectedCell.row][selectedCell.col] = num
@@ -47,9 +51,16 @@ function App() {
             row.map((value, colIndex) => (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                className={`cell ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''} ${colIndex === 2 || colIndex === 5 ? 'block-right' : ''} ${rowIndex === 2 || rowIndex === 5 ? 'block-bottom' : ''}`}
+                className={`cell ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''} ${lastEnteredCell?.row === rowIndex && lastEnteredCell?.col === colIndex && isCellInvalid(grid, rowIndex, colIndex) ? 'invalid' : ''} ${colIndex === 2 || colIndex === 5 ? 'block-right' : ''} ${rowIndex === 2 || rowIndex === 5 ? 'block-bottom' : ''}`}
                 role="gridcell"
                 aria-selected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
+                aria-invalid={
+                  lastEnteredCell?.row === rowIndex &&
+                  lastEnteredCell?.col === colIndex &&
+                  isCellInvalid(grid, rowIndex, colIndex)
+                    ? true
+                    : undefined
+                }
                 tabIndex={0}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
                 onKeyDown={(e) => {
@@ -66,7 +77,12 @@ function App() {
         </div>
       </div>
       <div className="buttons">
-        <button type="button" className="solve" disabled title="未実装">
+        <button
+          type="button"
+          className="solve"
+          disabled={hasAnyInvalidCell(grid)}
+          title={hasAnyInvalidCell(grid) ? '不正な入力があります' : '未実装'}
+        >
           Solve
         </button>
         <button type="button" onClick={handleReset}>

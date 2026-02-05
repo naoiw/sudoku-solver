@@ -76,6 +76,16 @@ body {
   background: #eff6ff;
 }
 
+.cell.invalid {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.cell.selected.invalid {
+  background: #fee2e2;
+  outline-color: #b91c1c;
+}
+
 .cell.block-right {
   border-right: 3px solid #333;
 }
