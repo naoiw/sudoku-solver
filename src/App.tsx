@@ -41,6 +41,18 @@ function App() {
     }
   }, [grid])
 
+  const handleClear = useCallback(() => {
+    setGrid((prev) =>
+      prev.map((row, r) =>
+        row.map((val, c) =>
+          solverFilledCells[r][c] ? null : val
+        )
+      )
+    )
+    setSolverFilledCells(EMPTY_SOLVER_FILLED.map((row) => [...row]))
+    setSolveError(null)
+  }, [solverFilledCells])
+
   const handleReset = useCallback(() => {
     setGrid(EMPTY_GRID.map((row) => [...row]))
     setSolverFilledCells(EMPTY_SOLVER_FILLED.map((row) => [...row]))
@@ -109,6 +121,15 @@ function App() {
           onClick={handleSolve}
         >
           Solve
+        </button>
+        <button
+          type="button"
+          className="clear"
+          title="ソルバーが埋めた数字だけを削除"
+          onClick={handleClear}
+          disabled={!solverFilledCells.some((row) => row.some(Boolean))}
+        >
+          Clear
         </button>
         <button type="button" onClick={handleReset}>
           Reset
