@@ -105,8 +105,13 @@ function App() {
 
   return (
     <div className="app">
-      <div className="board-wrapper">
-        <div className="board" role="grid" aria-label="数独の盤面">
+      <header className="app-header">
+        <h1 className="app-title">sudoku-solver</h1>
+        <p className="app-description">solveボタンを押すと数独の盤面を解きます</p>
+      </header>
+      <div className="app-main">
+        <div className="board-wrapper">
+          <div className="board" role="grid" aria-label="数独の盤面">
           {grid.map((row, rowIndex) =>
             row.map((value, colIndex) => (
               <div
@@ -128,9 +133,9 @@ function App() {
               </div>
             ))
           )}
+          </div>
         </div>
-      </div>
-      <div className="buttons">
+        <div className="buttons">
         <button
           type="button"
           className="solve"
@@ -157,6 +162,7 @@ function App() {
             {solveError}
           </p>
         )}
+        </div>
       </div>
     </div>
   )

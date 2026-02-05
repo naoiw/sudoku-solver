@@ -20,6 +20,32 @@ body {
 
 .app {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5.5rem;
+  justify-content: center;
+}
+
+.app-header {
+  text-align: left;
+  width: 100%;
+}
+
+.app-title {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.app-description {
+  margin: 0;
+  font-size: 1rem;
+  color: #444;
+}
+
+.app-main {
+  display: flex;
   align-items: center;
   gap: 2rem;
   flex-wrap: wrap;
