@@ -60,6 +60,21 @@ function App() {
     setSelectedCell(null)
   }, [])
 
+  const clearSelectedCell = useCallback(() => {
+    if (selectedCell == null) return
+    const { row, col } = selectedCell
+    setGrid((prev) => {
+      const next = prev.map((r) => [...r])
+      next[row][col] = null
+      return next
+    })
+    setSolverFilledCells((prev) => {
+      const next = prev.map((r) => [...r])
+      next[row][col] = false
+      return next
+    })
+  }, [selectedCell])
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (selectedCell == null) return
@@ -79,11 +94,14 @@ function App() {
           next[row][col] = false
           return next
         })
+      } else if (key === '0' || key === ' ' || key === 'Delete' || key === 'Backspace') {
+        e.preventDefault()
+        clearSelectedCell()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedCell])
+  }, [selectedCell, clearSelectedCell])
 
   return (
     <div className="app">
