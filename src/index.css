@@ -82,6 +82,27 @@ body {
   border-bottom: 1px solid #333;
 }
 
+.cell input {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  font-weight: inherit;
+  text-align: center;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.cell input::placeholder {
+  color: transparent;
+}
+
 /* 右端列は盤の外枠に任せる */
 .cell:nth-child(9n) {
   border-right: none;

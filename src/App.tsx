@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { isCellInvalid, hasAnyInvalidCell } from './sudokuValidation'
 import { solve } from './sudokuSolver'
 
@@ -21,10 +21,6 @@ function App() {
   )
   const [solveError, setSolveError] = useState<string | null>(null)
   const [selectedCell, setSelectedCell] = useState<SelectedCell>(null)
-
-  const handleCellClick = useCallback((row: number, col: number) => {
-    setSelectedCell({ row, col })
-  }, [])
 
   const handleSolve = useCallback(() => {
     const solution = solve(grid)
@@ -60,33 +56,13 @@ function App() {
     setSelectedCell(null)
   }, [])
 
-  const clearSelectedCell = useCallback(() => {
-    if (selectedCell == null) return
-    const { row, col } = selectedCell
-    setGrid((prev) => {
-      const next = prev.map((r) => [...r])
-      next[row][col] = null
-      return next
-    })
-    setSolverFilledCells((prev) => {
-      const next = prev.map((r) => [...r])
-      next[row][col] = false
-      return next
-    })
-  }, [selectedCell])
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (selectedCell == null) return
-      const key = e.key
-      if (key >= '1' && key <= '9') {
-        e.preventDefault()
-        const num = Number(key)
-        const row = selectedCell.row
-        const col = selectedCell.col
+  const handleCellInputChange = useCallback(
+    (row: number, col: number, e: React.ChangeEvent<HTMLInputElement>) => {
+      const v = e.target.value
+      if (v === '') {
         setGrid((prev) => {
           const next = prev.map((r) => [...r])
-          next[row][col] = num
+          next[row][col] = null
           return next
         })
         setSolverFilledCells((prev) => {
@@ -94,14 +70,55 @@ function App() {
           next[row][col] = false
           return next
         })
-      } else if (key === '0' || key === ' ' || key === 'Delete' || key === 'Backspace') {
-        e.preventDefault()
-        clearSelectedCell()
+        return
       }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedCell, clearSelectedCell])
+      const last = v.slice(-1)
+      const n = parseInt(last, 10)
+      if (n >= 1 && n <= 9) {
+        setGrid((prev) => {
+          const next = prev.map((r) => [...r])
+          next[row][col] = n
+          return next
+        })
+        setSolverFilledCells((prev) => {
+          const next = prev.map((r) => [...r])
+          next[row][col] = false
+          return next
+        })
+      } else {
+        setGrid((prev) => {
+          const next = prev.map((r) => [...r])
+          next[row][col] = null
+          return next
+        })
+        setSolverFilledCells((prev) => {
+          const next = prev.map((r) => [...r])
+          next[row][col] = false
+          return next
+        })
+      }
+    },
+    []
+  )
+
+  const handleCellInputKeyDown = useCallback(
+    (row: number, col: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === '0' || e.key === ' ' || e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault()
+        setGrid((prev) => {
+          const next = prev.map((r) => [...r])
+          next[row][col] = null
+          return next
+        })
+        setSolverFilledCells((prev) => {
+          const next = prev.map((r) => [...r])
+          next[row][col] = false
+          return next
+        })
+      }
+    },
+    []
+  )
 
   return (
     <div className="app">
@@ -120,16 +137,16 @@ function App() {
                 role="gridcell"
                 aria-selected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
                 aria-invalid={isCellInvalid(grid, rowIndex, colIndex) ? true : undefined}
-                tabIndex={0}
-                onClick={() => handleCellClick(rowIndex, colIndex)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    setSelectedCell({ row: rowIndex, col: colIndex })
-                  }
-                }}
               >
-                {value != null ? value : ''}
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={value != null ? String(value) : ''}
+                  onChange={(e) => handleCellInputChange(rowIndex, colIndex, e)}
+                  onKeyDown={(e) => handleCellInputKeyDown(rowIndex, colIndex, e)}
+                  onFocus={() => setSelectedCell({ row: rowIndex, col: colIndex })}
+                  aria-label={`${rowIndex + 1} 行 ${colIndex + 1} 列`}
+                />
               </div>
             ))
           )}
