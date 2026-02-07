@@ -85,6 +85,17 @@ function App() {
           next[row][col] = false
           return next
         })
+      } else {
+        setGrid((prev) => {
+          const next = prev.map((r) => [...r])
+          next[row][col] = null
+          return next
+        })
+        setSolverFilledCells((prev) => {
+          const next = prev.map((r) => [...r])
+          next[row][col] = false
+          return next
+        })
       }
     },
     []
@@ -130,7 +141,6 @@ function App() {
                 <input
                   type="text"
                   inputMode="numeric"
-                  maxLength={1}
                   value={value != null ? String(value) : ''}
                   onChange={(e) => handleCellInputChange(rowIndex, colIndex, e)}
                   onKeyDown={(e) => handleCellInputKeyDown(rowIndex, colIndex, e)}
