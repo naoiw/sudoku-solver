@@ -24,6 +24,7 @@ body {
   align-items: flex-start;
   gap: 5.5rem;
   justify-content: center;
+  max-width: 100%;
 }
 
 .app-header {
@@ -60,8 +61,8 @@ body {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
-  width: min(108vmin, 540px);
-  height: min(108vmin, 540px);
+  width: min(90vmin, 540px);
+  height: min(90vmin, 540px);
   border: 3px solid #333;
   background: #fff;
 }
@@ -173,4 +174,14 @@ body {
   margin: 0;
   font-size: 0.9rem;
   color: #b91c1c;
+}
+
+@media (max-width: 480px) {
+  #root {
+    padding: 0.5rem;
+  }
+
+  .app {
+    gap: 2rem;
+  }
 }
