@@ -10,7 +10,7 @@
 - パッケージマネージャ: pnpm
 - ビルドツール: Vite
 - フレームワーク: React
-- スタイル: Tailwind CSS
+- スタイル: CSS（`src/index.css`）
 
 ## クイックスタート
 

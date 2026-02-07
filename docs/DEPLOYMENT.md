@@ -29,13 +29,6 @@ export default defineConfig({
 
 GitHub の Settings → Pages で、**Source** を「GitHub Actions」にしておくと、上記ワークフローでデプロイされた内容が `https://naoiw.github.io/sudoku-solver` に反映されます。公開元ブランチは「GitHub Actions」を選んだ場合は不要で、Actions の成果物がそのまま配信されます。
 
-## 初回目標: 「Hello World!!」の表示
+## デプロイの流れ
 
-まずは次の状態を目指します。
-
-1. Vite + React + TypeScript でプロジェクトを初期化し、画面に「Hello World!!」とだけ表示する
-2. `vite.config` に `base: '/sudoku-solver/'` を設定する
-3. 上記の GitHub Actions ワークフローを用意し、`main` に push するとビルド〜デプロイが走るようにする
-4. デプロイ後、`https://naoiw.github.io/sudoku-solver` にアクセスすると「Hello World!!」が表示されることを確認する
-
-ここまでできれば、以降は [SPEC.md](SPEC.md) に沿って盤面 UI と solver を実装していけます。デプロイ手順は変わらず、push のたびに自動で最新版が反映されます。
+上記の GitHub Actions ワークフローにより、`main` ブランチへ push するたびにビルド〜デプロイが自動で実行され、[https://naoiw.github.io/sudoku-solver](https://naoiw.github.io/sudoku-solver) に数独ソルバーアプリの最新版が反映されます。
