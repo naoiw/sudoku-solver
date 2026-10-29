@@ -7,6 +7,7 @@ Node.js 20 / pnpm 9 を使用。
 ```bash
 pnpm install --frozen-lockfile
 pnpm dev
+pnpm test
 pnpm build
 ```
 
@@ -20,8 +21,11 @@ pnpm build
 - `src/sudokuValidation.ts` : 重複判定と表示用の不正マスク
 - `src/sudokuUtils.ts` : 行・列・ブロックの検査
 - `src/index.css` : スタイルとレスポンシブ対応
+- `tests/solver.test.cjs` : ソルバーのNode標準テストランナーによる回帰テスト
 
-GitHub Pages の配信パスは `vite.config.ts` の `base: '/sudoku-solver/'` に設定。デプロイは main への push でのみ実行されます。
+`pnpm test` はソルバーのTypeScriptファイルのみを `test-dist/` にCommonJSとしてコンパイルして実行します。生成JavaScriptはGit管理対象外です。
+
+GitHub Pages の配信パスは `vite.config.ts` の `base: '/sudoku-solver/'` に設定。デプロイは main への push でのみ実行されます。プルリクエスト時は `check.yml` でテストとビルドを行い、Pagesへはデプロイしません。
 
 ## 実装メモ
 
