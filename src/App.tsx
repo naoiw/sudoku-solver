@@ -5,7 +5,7 @@ import { useSudoku } from './hooks/useSudoku'
 function App() {
   const {
     grid, solverCells, status, selected, setSelected, setCell,
-    solvePuzzle, clearSolution, reset, loadExample,
+    solvePuzzle, clearSolution, reset,
     invalidCells, invalidCount, givenCount, solvedCount, canSolve,
   } = useSudoku()
 
@@ -20,7 +20,7 @@ function App() {
       : isSolved
         ? '解答が完成しました。青い数字が自動で埋めたマスです。'
         : givenCount === 0
-          ? '盤面を入力するか、例題を読み込んで始めましょう。'
+          ? '盤面に数字を入力してください。'
           : '入力中です。数字を入れ終わったら「解答する」を押してください。'
 
   return (
@@ -121,9 +121,6 @@ function App() {
                   <span aria-hidden="true">⟲</span> すべて消去
                 </button>
               </div>
-              <button type="button" className="example-button" onClick={loadExample}>
-                <span aria-hidden="true">▦</span> 例題を読み込む <span aria-hidden="true">↗</span>
-              </button>
             </section>
           </aside>
         </div>

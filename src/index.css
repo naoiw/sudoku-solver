@@ -87,9 +87,6 @@ button:disabled { cursor: not-allowed; }
 .tool-button:hover:not(:disabled) { background: #f5f7fd; border-color: #a7b5df; }
 .tool-button:disabled { opacity: .42; }
 .tool-button span { margin-right: 4px; font-size: 16px; }
-.example-button { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; background: none; text-align: left; padding: 19px 2px 0; color: #4e67b9; font-size: 12px; font-weight: 800; cursor: pointer; }
-.example-button span:last-child { margin-left: auto; }
-.example-button:hover { color: #203b8d; }
 .bottom-note { display: flex; align-items: flex-start; gap: 11px; margin: 25px 1px 36px; }
 .bottom-note p { font-size: 12px; line-height: 1.9; color: #8d96a8; margin: 0; }
 .bottom-note strong { color: #66738a; }

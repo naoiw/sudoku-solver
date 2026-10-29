@@ -11,18 +11,6 @@ type PuzzleState = {
   status: PuzzleStatus
 }
 
-const EXAMPLE_ROWS = [
-  '530070000',
-  '600195000',
-  '098000060',
-  '800060003',
-  '400803001',
-  '700020006',
-  '060000280',
-  '000419005',
-  '000080079',
-]
-
 function emptyGrid(): SudokuGrid {
   return Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null))
 }
@@ -33,12 +21,6 @@ function emptySolverCells(): boolean[][] {
 
 function newPuzzle(grid: SudokuGrid = emptyGrid()): PuzzleState {
   return { grid, solverCells: emptySolverCells(), status: 'editing' }
-}
-
-function exampleGrid(): SudokuGrid {
-  return EXAMPLE_ROWS.map((row) =>
-    [...row].map((value) => value === '0' ? null : Number(value))
-  )
 }
 
 export function useSudoku() {
@@ -92,11 +74,6 @@ export function useSudoku() {
     setSelected({ row: 0, col: 0 })
   }, [])
 
-  const loadExample = useCallback(() => {
-    setPuzzle(newPuzzle(exampleGrid()))
-    setSelected({ row: 0, col: 0 })
-  }, [])
-
   return {
     ...puzzle,
     selected,
@@ -105,7 +82,6 @@ export function useSudoku() {
     solvePuzzle,
     clearSolution,
     reset,
-    loadExample,
     invalidCells,
     invalidCount,
     givenCount,
