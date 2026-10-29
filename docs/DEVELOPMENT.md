@@ -54,8 +54,18 @@ git push origin develop
 - `src/sudokuUtils.ts` : 行・列・ブロックの検査
 - `src/index.css` : スタイルとレスポンシブ対応
 - `tests/solver.test.cjs` : ソルバーのNode標準テストランナーによる回帰テスト
+- `tests/package.json` : テスト用のコンパイル結果を CommonJS として読み込むための設定
+- `tests/dist/` : `pnpm test` による一時コンパイル先（Git管理対象外）
 
-`pnpm test` はソルバーのTypeScriptファイルのみを `test-dist/` にCommonJSとしてコンパイルして実行します。生成JavaScriptはGit管理対象外です。
+`pnpm test` はソルバーのTypeScriptファイルのみを `tests/dist/` にCommonJSとしてコンパイルして実行します。生成されたJavaScriptや `tsconfig.*.tsbuildinfo` は `.gitignore` で除外します。コードや設定を変更したあとは `pnpm test` と `pnpm build` の両方を実行してください。
+
+## CI
+
+- `.github/workflows/check.yml` : PR (`develop` → `main`) と再利用ワークフロー用の共通チェック定義
+- `.github/workflows/validate-develop.yml` : `develop` push時に共通チェックを呼び出す
+- `.github/workflows/deploy-pages.yml` : `main` と `develop` の両方を GitHub Pages に配置
+
+開発版の公開は `Validate develop` の成功をトリガーとするため、ワークフロー名はデプロイ設定と対応させて維持してください。
 
 GitHub Pagesはmainのみをデプロイ実行元として使い、プレビューには最新のdevelopを同梱します。詳細は [DEPLOYMENT.md](DEPLOYMENT.md) を参照してください。
 

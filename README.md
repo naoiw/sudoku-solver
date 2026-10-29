@@ -16,11 +16,7 @@
 
 ## ブランチ運用
 
-- `develop` : 日常の機能追加・修正・リファクタリングを行う開発ブランチ。継続して使用し、マージ後も削除しない。
-- `main` : 本番公開用ブランチ。通常の開発では直接コミット・pushしない。
-- 開発は `develop` にpushし、`main` への反映は **`develop` → `main` のプルリクエスト** を作成する。
-- PRのチェック（テスト・ビルド）を確認してからマージする。マージ後は `main` の変更を `develop` に取り込み、次の開発を続ける。
-- 公開版は `main`、開発プレビューは `develop` の内容を配信する。
+開発は `develop` で行い、テスト・ビルドの成功を確認してから `develop` → `main` のプルリクエストでマージします。`develop` は削除せず継続使用します。詳細は [開発手順](docs/DEVELOPMENT.md) を参照してください。
 
 ## 開発
 
@@ -40,6 +36,7 @@ pnpm build
 - `src/sudokuSolver.ts` — 解探索
 - `src/sudokuValidation.ts` — 重複判定
 - `src/sudokuUtils.ts` — 盤面の基礎関数
+- `tests/` — ソルバーの自動テスト
 
 詳細は [仕様書](docs/SPEC.md)、[開発手順](docs/DEVELOPMENT.md)、[デプロイ](docs/DEPLOYMENT.md) を参照してください。
 

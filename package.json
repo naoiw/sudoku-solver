@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "tsc --target es2020 --module commonjs --moduleResolution node --strict --skipLibCheck --rootDir src --outDir test-dist src/sudokuUtils.ts src/sudokuValidation.ts src/sudokuSolver.ts && node --test tests/solver.test.cjs"
+    "test": "tsc --target es2020 --module commonjs --moduleResolution node --strict --skipLibCheck --rootDir src --outDir tests/dist src/sudokuUtils.ts src/sudokuValidation.ts src/sudokuSolver.ts && node --test tests/solver.test.cjs"
   },
   "dependencies": {
     "react": "^18.3.1",
