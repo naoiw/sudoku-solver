@@ -35,14 +35,11 @@ function App() {
             <div className="brand-caption">数独ソルバー</div>
           </div>
         </div>
-        <span className="header-label">シンプルに、すばやく解く。</span>
       </header>
 
       <main>
         <div className="page-heading">
-          <div className="eyebrow"><span className="eyebrow-line" /> SOLVE YOUR PUZZLE</div>
-          <h1>数独を、<span>もっとスマートに。</span></h1>
-          <p>数字を入力するだけで、数独の答えをすぐに表示。<br className="desktop-break" />手入力でも、画面上の数字パッドでも操作できます。</p>
+          <h1>数独ソルバー</h1>
         </div>
 
         <div className="workspace">
@@ -137,10 +134,6 @@ function App() {
         </div>
       </main>
 
-      <footer className="site-footer">
-        <span>SUDOKU STUDIO</span>
-        <span>Made for curious minds.</span>
-      </footer>
     </div>
   )
 }
