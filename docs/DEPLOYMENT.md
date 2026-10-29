@@ -13,7 +13,7 @@ GitHub Pages自体は1つの環境・デプロイ先です。両ブランチの�
 
 ## ブランチとワークフロー
 
-- `develop` にpushすると `.github/workflows/validate-develop.yml` がテストとビルドを実行します。
+- `develop` にpushすると `.github/workflows/validate-develop.yml` が共通チェック (`.github/workflows/check.yml`) を呼び出してテストとビルドを実行します。
 - 検証が成功すると、デフォルトブランチの `deploy-pages.yml` が `workflow_run` イベントを受け取って実行されます。
 - `main` へのpushも同じデプロイワークフローを起動します。
 - 両方をcheckoutし、`main` は通常の `/sudoku-solver/`、`develop` は `vite build --base=/sudoku-solver/develop/` でビルドします。
@@ -27,7 +27,7 @@ GitHub Settings → Pages → Build and deployment → Source は `GitHub Action
 
 `deploy-pages.yml` はデフォルトブランチ（main）にも存在している必要があります。GitHubの `workflow_run` トリガーはデフォルトブランチ上のワークフローにのみ適用されるためです。
 
-PRへの更新時に `check.yml` が別途テスト・ビルドを実行します。
+PRへの更新時も同じ `check.yml` のテスト・ビルドが実行されます。`Validate develop` の成功がPages公開のトリガーになるため、ワークフロー名を変更する場合は `deploy-pages.yml` の `workflow_run.workflows` も更新してください。
 
 ## 注意事項
 

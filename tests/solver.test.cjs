@@ -1,7 +1,7 @@
 const test = require('node:test')
 const assert = require('node:assert/strict')
-const { solve, canPlace } = require('../test-dist/sudokuSolver.js')
-const { getInvalidCells, hasAnyInvalidCell } = require('../test-dist/sudokuValidation.js')
+const { solve, canPlace } = require('./dist/sudokuSolver.js')
+const { getInvalidCells, hasAnyInvalidCell } = require('./dist/sudokuValidation.js')
 
 const puzzle = [
   '530070000',

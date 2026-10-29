@@ -1,22 +1,25 @@
 # Dependencies
 node_modules/
 
-# Build output
+# Generated build/test outputs
 dist/
 dist-ssr/
-test-dist/*.js
+tests/dist/
+test-dist/
+*.tsbuildinfo
 
-# Local env
+# Local environment variables
 .env
 .env.local
 .env.*.local
 
-# Editor
+# Editor settings
 .vscode/*
 !.vscode/extensions.json
 .idea/
+.cursor/
 
-# OS
+# Operating system files
 .DS_Store
 Thumbs.db
 
@@ -24,6 +27,3 @@ Thumbs.db
 *.log
 npm-debug.log*
 pnpm-debug.log*
-
-# Unused Cursor-specific configuration
-.cursor/
