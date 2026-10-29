@@ -64,6 +64,14 @@ function App() {
               onDigit={setCell}
             />
 
+            <div className="mobile-number-pad">
+              <div className="mobile-input-heading">
+                <span>数字を入力</span>
+                <span className="selected-coordinate">{selected.row + 1}行 {selected.col + 1}列</span>
+              </div>
+              <NumberPad onDigit={(value) => setCell(selected.row, selected.col, value)} />
+            </div>
+
             <div className="board-meta">
               <div className="legend">
                 <span><i className="legend-dot manual-dot" />入力した数字</span>
