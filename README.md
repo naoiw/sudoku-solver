@@ -6,6 +6,8 @@
 
 **開発プレビュー**: https://naoiw.github.io/sudoku-solver/develop/
 
+本番・プレビューは同じGitHub Pages環境（`github-pages`）で公開します。developの検証が成功するとmain側のデプロイが起動します。
+
 ## 機能
 
 - キーボード（数字・矢印・消去キー）または画面上の数字パッドによる入力

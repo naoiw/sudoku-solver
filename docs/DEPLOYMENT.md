@@ -1,36 +1,36 @@
-# デプロイ手順（DEPLOYMENT）
+# GitHub Pages デプロイ
 
-## 公開URL
+## 公開先
 
-GitHub Pagesの同一サイト内で、本番と開発版を別々のパスで公開します。
+1つの`github-pages`環境から本番と開発版を同時に公開します。
 
-| ソースブランチ | URL |
+| ソース | URL |
 | --- | --- |
 | main | https://naoiw.github.io/sudoku-solver/ |
 | develop | https://naoiw.github.io/sudoku-solver/develop/ |
 
-GitHub Pages自体は1つの環境・デプロイ先です。両ブランチのビルド成果物をまとめた1つのアーティファクトを毎回配信します。
+## ワークフロー（2ファイル）
 
-## ブランチとワークフロー
+1. `.github/workflows/validate-develop.yml` はdevelopへのpush、またはmain/develop宛PRでテストとビルドを実行します。PRの成功だけでは公開しません。
+2. developのpush検証が成功すると、main上の`.github/workflows/deploy-pages.yml`が`workflow_run`で起動します。検証が失敗・キャンセルした場合やPRであった場合は公開しません。
+3. mainへのpushでは公開ワークフローを直接起動します。手動実行はmainからのみ実行できます。
+4. 公開時にmainとdevelopをそれぞれ再検証してビルドします。`workflow_run`時のdevelopは、検証成功したコミットSHAを使用します。
+5. mainの成果物を公開ルートに、developを`develop/`にまとめ、**1アーティファクト**としてPagesに公開します。
 
-- `develop` にpushすると `.github/workflows/validate-develop.yml` が共通チェック (`.github/workflows/check.yml`) を呼び出してテストとビルドを実行します。
-- 検証が成功すると、デフォルトブランチの `deploy-pages.yml` が `workflow_run` イベントを受け取って実行されます。
-- `main` へのpushも同じデプロイワークフローを起動します。
-- 両方をcheckoutし、`main` は通常の `/sudoku-solver/`、`develop` は `vite build --base=/sudoku-solver/develop/` でビルドします。
-- `main/dist` を公開ルートに、`develop/dist` を公開ルート内の `develop/` にコピーし、まとめて公開します。
+developのビルドには`vite build --base=/sudoku-solver/develop/`を使い、相対パスを修正します。本番は通常の`pnpm build`です。デプロイは同時実行せず順次処理します。
 
-**注意:** `github-pages` 環境がmainブランチのみデプロイ可能な場合でも公開できるよう、Pagesにデプロイするジョブは常にmainを実行元とする設計です。develop自身からの直接デプロイは行いません。こうすることでブランチ保護ルールを緩める必要がありません。
+## 設定と権限
 
-## 設定
+- GitHub Settings → Pages → Build and deployment → Source：GitHub Actions
+- GitHub Pages Environment：`github-pages`（1つのみ）
+- mainのみを許可する`github-pages`環境保護ルールを維持できます。デプロイはデフォルトブランチmainから実行されるため、develop自身に公開権限は必要ありません。
+- ビルドには`contents: read`のみ、デプロイジョブのみに`pages: write`・`id-token: write`を設定しています。
+- `workflow_run`のトリガーはデフォルトブランチに配置されたワークフローにのみ反応するため、`deploy-pages.yml`をmainに置いてください。
+- `Validate develop`のワークフロー名を変える場合は、`deploy-pages.yml`の`workflow_run.workflows`も更新してください。
 
-GitHub Settings → Pages → Build and deployment → Source は `GitHub Actions` に設定します。
+## 注意点
 
-`deploy-pages.yml` はデフォルトブランチ（main）にも存在している必要があります。GitHubの `workflow_run` トリガーはデフォルトブランチ上のワークフローにのみ適用されるためです。
-
-PRへの更新時も同じ `check.yml` のテスト・ビルドが実行されます。`Validate develop` の成功がPages公開のトリガーになるため、ワークフロー名を変更する場合は `deploy-pages.yml` の `workflow_run.workflows` も更新してください。
-
-## 注意事項
-
-- developの更新に合わせて最新のmainも再ビルドします。mainのソース自体は変更されません。
-- 直接アクセス可能な開発プレビューURLなので、未公開の秘密情報をdevelopのフロントエンドに含めないでください。
-- `github-pages` の環境保護設定はmainのまま維持してください。
+- developの検証が成功すればmainにマージせず開発プレビューを更新できます。本番実装はmainの内容を使います。
+- 新しいdevelopの検証が失敗した場合、過去の検証済みプレビューは残ります。
+- 公開ワークフローが実行中にさらにdevelopが更新された場合、検証を通過したコミットが一時的に表示され、次の成功した公開で更新されます。
+- 開発プレビューは誰でもアクセスできます。秘密情報を埋め込まないでください。
