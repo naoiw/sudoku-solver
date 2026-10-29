@@ -25,8 +25,8 @@ pnpm build
 
 `pnpm test` はソルバーのTypeScriptファイルのみを `test-dist/` にCommonJSとしてコンパイルして実行します。生成JavaScriptはGit管理対象外です。
 
-GitHub Pages の配信パスは `vite.config.ts` の `base: '/sudoku-solver/'` に設定。デプロイは main への push でのみ実行されます。プルリクエスト時は `check.yml` でテストとビルドを行い、Pagesへはデプロイしません。
+GitHub Pagesはmainのみをデプロイ実行元として使い、プレビューには最新のdevelopを同梱します。詳細は [DEPLOYMENT.md](DEPLOYMENT.md) を参照してください。
 
 ## 実装メモ
 
-React の UI と解答ロジックは分離し、ソルバーへ渡すグリッドは変更しない。解答は1つのみ返し、一意性判定は行わない。入力重複と解なしは別の状態として扱う。
+ReactのUIと解答ロジックは分離し、ソルバーへ渡すグリッドは変更しない。解答は1つのみ返し、一意性判定は行わない。入力重複と解なしは別の状態として扱う。
