@@ -11,6 +11,38 @@ pnpm test
 pnpm build
 ```
 
+## ブランチ運用
+
+- **実装・修正は `develop` で行う**。`main` は本番用とし、通常は直接pushしない。
+- `main` に取り込むときは、必ず **base: `main` / compare: `develop`** のプルリクエストを作る。
+- PRの自動テスト・ビルドを確認し、問題なければマージする。
+- **マージ後も `develop` を削除しない。** マージによって `main` に追加されたコミットを `develop` に取り込み、両ブランチの差分を整理してから開発を再開する。
+- `develop` は専用のPagesプレビューに自動デプロイされる。確認に `main` へのマージは不要。
+
+普段の作業例：
+
+```bash
+git switch develop
+git pull origin develop
+# 変更・動作確認
+pnpm test
+pnpm build
+git add .
+git commit -m "feat: describe changes"
+git push origin develop
+# GitHubで develop → main のPRを作成・確認・マージ
+```
+
+マージ後の同期例：
+
+```bash
+git switch develop
+git pull origin develop
+git fetch origin
+git merge origin/main
+git push origin develop
+```
+
 ## ディレクトリ
 
 - `src/App.tsx` : ページレイアウト、状態に応じた表示
