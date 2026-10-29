@@ -5,54 +5,72 @@ import {
   hasValueInCol,
   hasValueInBlock,
 } from './sudokuUtils'
+import { hasAnyInvalidCell } from './sudokuValidation'
 
-/**
- * 指定マスに value を置いても、行・列・同一 3x3 ブロックで重複しないか判定する。
- */
+/** 指定した空きマスに数字を置けるかを判定する。 */
 export function canPlace(
   grid: SudokuGrid,
   row: number,
   col: number,
   value: number
 ): boolean {
-  if (hasValueInRow(grid, row, value)) return false
-  if (hasValueInCol(grid, col, value)) return false
-  if (hasValueInBlock(grid, row, col, value)) return false
-  return true
+  return (
+    !hasValueInRow(grid, row, value) &&
+    !hasValueInCol(grid, col, value) &&
+    !hasValueInBlock(grid, row, col, value)
+  )
 }
 
+type CandidateCell = { row: number; col: number; candidates: number[] }
+
 /**
- * 先頭から見て最初の空きマスの位置を返す。空きマスがなければ null。
+ * 候補数が最も少ない空きマスを優先する（MRV）。
+ * 候補ゼロのマスを見つけた場合もそのまま返し、探索を打ち切る。
  */
-function findEmptyCell(grid: SudokuGrid): { row: number; col: number } | null {
-  for (let r = 0; r < BOARD_SIZE; r++) {
-    for (let c = 0; c < BOARD_SIZE; c++) {
-      if (grid[r][c] == null) return { row: r, col: c }
+function findNextCell(grid: SudokuGrid): CandidateCell | null {
+  let best: CandidateCell | null = null
+
+  for (let row = 0; row < BOARD_SIZE; row++) {
+    for (let col = 0; col < BOARD_SIZE; col++) {
+      if (grid[row][col] !== null) continue
+
+      const candidates: number[] = []
+      for (let value = 1; value <= BOARD_SIZE; value++) {
+        if (canPlace(grid, row, col, value)) candidates.push(value)
+      }
+
+      if (candidates.length === 0) return { row, col, candidates }
+      if (best === null || candidates.length < best.candidates.length) {
+        best = { row, col, candidates }
+        if (candidates.length === 1) return best
+      }
     }
   }
-  return null
+
+  return best
 }
 
 /**
- * 深さ優先探索で数独を解く。解が1つ見つかった時点で返す。
- * 解がなければ null を返す。入力 grid は変更しない。
+ * 数独の解を1つ求める。入力は変更せず、解がなければ null を返す。
+ * 最初に重複を検証するため、完成済みの不正な盤面を解と誤認しない。
  */
 export function solve(grid: SudokuGrid): SudokuGrid | null {
-  const empty = findEmptyCell(grid)
-  if (empty === null) {
-    return grid.map((row) => [...row])
+  if (hasAnyInvalidCell(grid)) return null
+
+  const working = grid.map((row) => [...row])
+
+  function search(): boolean {
+    const next = findNextCell(working)
+    if (next === null) return true
+    if (next.candidates.length === 0) return false
+
+    for (const candidate of next.candidates) {
+      working[next.row][next.col] = candidate
+      if (search()) return true
+    }
+    working[next.row][next.col] = null
+    return false
   }
 
-  const { row: emptyRow, col: emptyCol } = empty
-
-  for (let num = 1; num <= 9; num++) {
-    if (!canPlace(grid, emptyRow, emptyCol, num)) continue
-
-    const next = grid.map((r) => [...r])
-    next[emptyRow][emptyCol] = num
-    const result = solve(next)
-    if (result !== null) return result
-  }
-
-  return null
+  return search() ? working : null
 }
