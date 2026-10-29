@@ -2,7 +2,9 @@
 
 ブラウザで使える数独ソルバー。9×9の盤面を入力すると、重複をリアルタイムで検出し、解を1つ求めます。
 
-**デモ**: https://naoiw.github.io/sudoku-solver/
+**本番**: https://naoiw.github.io/sudoku-solver/
+
+**開発プレビュー**: https://naoiw.github.io/sudoku-solver/develop/
 
 ## 機能
 
@@ -19,6 +21,7 @@ Node.js 20、pnpm 9 を使用します。
 ```bash
 pnpm install
 pnpm dev
+pnpm test
 pnpm build
 ```
 
