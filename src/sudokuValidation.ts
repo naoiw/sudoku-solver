@@ -6,11 +6,7 @@ import {
   hasValueInBlock,
 } from './sudokuUtils'
 
-/**
- * 指定マスが不正かどうかを判定する。
- * 空きマス（null）は常に不正ではない。
- * 同じ行・列・同一 3x3 ブロック内に同じ数字が他に1つでもあれば true。
- */
+/** 行・列・3×3ブロック内の重複があれば、そのマスを不正と判定する。 */
 export function isCellInvalid(
   grid: SudokuGrid,
   row: number,
@@ -19,21 +15,22 @@ export function isCellInvalid(
   const value = grid[row]?.[col]
   if (value == null) return false
 
-  if (hasValueInRow(grid, row, value, col)) return true
-  if (hasValueInCol(grid, col, value, row)) return true
-  if (hasValueInBlock(grid, row, col, value, row, col)) return true
-
-  return false
+  return (
+    hasValueInRow(grid, row, value, col) ||
+    hasValueInCol(grid, col, value, row) ||
+    hasValueInBlock(grid, row, col, value, row, col)
+  )
 }
 
-/**
- * 盤面全体に不正なマスが1つでもあるかどうかを判定する。
- */
+/** 盤面の表示に使う不正マスの一覧を一度に求める。 */
+export function getInvalidCells(grid: SudokuGrid): boolean[][] {
+  return Array.from({ length: BOARD_SIZE }, (_, row) =>
+    Array.from({ length: BOARD_SIZE }, (_, col) =>
+      isCellInvalid(grid, row, col)
+    )
+  )
+}
+
 export function hasAnyInvalidCell(grid: SudokuGrid): boolean {
-  for (let row = 0; row < BOARD_SIZE; row++) {
-    for (let col = 0; col < BOARD_SIZE; col++) {
-      if (isCellInvalid(grid, row, col)) return true
-    }
-  }
-  return false
+  return getInvalidCells(grid).some((row) => row.some(Boolean))
 }

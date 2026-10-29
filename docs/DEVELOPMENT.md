@@ -1,54 +1,32 @@
-# 開発手順（DEVELOPMENT）
+# 開発手順
 
-## 環境
+## 起動
 
-- **Node.js**: 20 LTS を推奨（`.nvmrc` に `20` を記載しておくとよい）
-- **パッケージマネージャ**: pnpm
-
-## 技術スタック
-
-- 言語: TypeScript
-- パッケージマネージャ: pnpm
-- ビルドツール: Vite
-- フレームワーク: React
-- スタイル: CSS（`src/index.css`）
-
-## セットアップ
+Node.js 20 / pnpm 9 を使用。
 
 ```bash
-pnpm install
-```
-
-Node のバージョン管理に nvm を使う場合は、リポジトリルートに `.nvmrc` で `20` を指定しておくと `nvm use` で切り替えられます。
-
-## 開発サーバ
-
-```bash
+pnpm install --frozen-lockfile
 pnpm dev
-```
-
-Vite の開発サーバが起動するので、表示された URL（例: `http://localhost:5173`）をブラウザで開いて確認します。
-
-## ビルド
-
-```bash
+pnpm test
 pnpm build
 ```
 
-Vite で本番用ビルドが実行され、出力は通常 `dist/` に生成されます。GitHub Pages 用にデプロイする場合は、`vite.config.ts` で `base: '/sudoku-solver/'` を設定する必要があります（[DEPLOYMENT.md](DEPLOYMENT.md) 参照）。
+## ディレクトリ
 
-## テスト
+- `src/App.tsx` : ページレイアウト、状態に応じた表示
+- `src/hooks/useSudoku.ts` : 操作・画面状態の管理
+- `src/components/SudokuBoard.tsx` : 盤面、選択とキーボード入力
+- `src/components/NumberPad.tsx` : 画面入力パッド
+- `src/sudokuSolver.ts` : 副作用のない解答 API、探索時のみコピー上で変更
+- `src/sudokuValidation.ts` : 重複判定と表示用の不正マスク
+- `src/sudokuUtils.ts` : 行・列・ブロックの検査
+- `src/index.css` : スタイルとレスポンシブ対応
+- `tests/solver.test.cjs` : ソルバーのNode標準テストランナーによる回帰テスト
 
-現時点ではテストは導入していません。将来、solver ロジックや UI のテストを追加する場合は、Vitest などを検討できます。
+`pnpm test` はソルバーのTypeScriptファイルのみを `test-dist/` にCommonJSとしてコンパイルして実行します。生成JavaScriptはGit管理対象外です。
 
-## ディレクトリ構成
+GitHub Pagesはmainのみをデプロイ実行元として使い、プレビューには最新のdevelopを同梱します。詳細は [DEPLOYMENT.md](DEPLOYMENT.md) を参照してください。
 
-- `index.html` … エントリの HTML
-- `src/` … ソースコード
-  - `main.tsx` … エントリポイント
-  - `App.tsx` … ルートコンポーネント
-  - `index.css` … グローバルスタイル
-  - `sudokuSolver.ts` … 数独ソルバー（深さ優先探索）
-  - `sudokuUtils.ts` … 盤面ユーティリティ（行・列・ブロック判定など）
-  - `sudokuValidation.ts` … 入力検証（不正マス判定）
-  - `vite-env.d.ts` … Vite 用型定義
+## 実装メモ
+
+ReactのUIと解答ロジックは分離し、ソルバーへ渡すグリッドは変更しない。解答は1つのみ返し、一意性判定は行わない。入力重複と解なしは別の状態として扱う。

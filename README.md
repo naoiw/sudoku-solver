@@ -1,36 +1,38 @@
-# sudoku-solver
+# SUDOKU STUDIO
 
-数独の盤面を入力し、Solve ボタンで解を表示する Web アプリです。入力時はリアルタイムで重複チェックを行い、不正なマスは赤表示されます。不正なマスが1つでもある間は Solve ボタンは押せません。スマートフォンではセルをタップすると数値用キーパッド（テンキー）が表示され、数字を入力できます。
+ブラウザで使える数独ソルバー。9×9の盤面を入力すると、重複をリアルタイムで検出し、解を1つ求めます。
 
-- **デモ**: [https://naoiw.github.io/sudoku-solver](https://naoiw.github.io/sudoku-solver)
+**本番**: https://naoiw.github.io/sudoku-solver/
 
-## 技術スタック
+**開発プレビュー**: https://naoiw.github.io/sudoku-solver/develop/
 
-- 言語: TypeScript
-- パッケージマネージャ: pnpm
-- ビルドツール: Vite
-- フレームワーク: React
-- スタイル: CSS（`src/index.css`）
+## 機能
 
-## クイックスタート
+- キーボード（数字・矢印・消去キー）または画面上の数字パッドによる入力
+- 行・列・3×3ブロックの重複チェックと該当マスの強調表示
+- 探索アルゴリズム（MRVを用いたバックトラッキング）による解答
+- 自動入力した数字の色分け、解答部分のみ消去、全消去
+- スマートフォン向けレスポンシブUI
+
+## 開発
+
+Node.js 20、pnpm 9 を使用します。
 
 ```bash
-git clone https://github.com/naoiw/sudoku-solver.git
-cd sudoku-solver
 pnpm install
 pnpm dev
+pnpm test
+pnpm build
 ```
 
-ブラウザで開発サーバにアクセスして動作を確認できます。
+## 構成
 
-## ドキュメント
+- `src/hooks/useSudoku.ts` — 盤面状態と操作
+- `src/components/` — 盤面表示と数字パッド
+- `src/sudokuSolver.ts` — 解探索
+- `src/sudokuValidation.ts` — 重複判定
+- `src/sudokuUtils.ts` — 盤面の基礎関数
 
-詳細は `docs/` を参照してください。
+詳細は [仕様書](docs/SPEC.md)、[開発手順](docs/DEVELOPMENT.md)、[デプロイ](docs/DEPLOYMENT.md) を参照してください。
 
-- [ページ仕様](docs/SPEC.md)
-- [開発手順](docs/DEVELOPMENT.md)
-- [デプロイ手順](docs/DEPLOYMENT.md)
-
-## ライセンス
-
-MIT License（[LICENSE](LICENSE)）
+MIT License。

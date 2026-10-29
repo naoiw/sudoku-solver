@@ -1,34 +1,36 @@
 # デプロイ手順（DEPLOYMENT）
 
-## 配信先
+## 公開URL
 
-- **GitHub Project Pages**: [https://naoiw.github.io/sudoku-solver](https://naoiw.github.io/sudoku-solver)
-- リポジトリ名が URL のパスになるため、Vite の **base** 設定が必須です。
+GitHub Pagesの同一サイト内で、本番と開発版を別々のパスで公開します。
 
-## Vite の base 設定
+| ソースブランチ | URL |
+| --- | --- |
+| main | https://naoiw.github.io/sudoku-solver/ |
+| develop | https://naoiw.github.io/sudoku-solver/develop/ |
 
-GitHub Pages では `https://naoiw.github.io/sudoku-solver/` のようにサブパスで配信されるため、`vite.config.ts`（または `vite.config.js`）で次を指定します。
+GitHub Pages自体は1つの環境・デプロイ先です。両ブランチのビルド成果物をまとめた1つのアーティファクトを毎回配信します。
 
-```ts
-export default defineConfig({
-  base: '/sudoku-solver/',
-  // ... その他の設定
-});
-```
+## ブランチとワークフロー
 
-これを設定しないと、ビルド後の JS/CSS のパスがルート相対になり、Pages 上で 404 になります。
+- `develop` にpushすると `.github/workflows/validate-develop.yml` がテストとビルドを実行します。
+- 検証が成功すると、デフォルトブランチの `deploy-pages.yml` が `workflow_run` イベントを受け取って実行されます。
+- `main` へのpushも同じデプロイワークフローを起動します。
+- 両方をcheckoutし、`main` は通常の `/sudoku-solver/`、`develop` は `vite build --base=/sudoku-solver/develop/` でビルドします。
+- `main/dist` を公開ルートに、`develop/dist` を公開ルート内の `develop/` にコピーし、まとめて公開します。
 
-## GitHub Actions での自動デプロイ
+**注意:** `github-pages` 環境がmainブランチのみデプロイ可能な場合でも公開できるよう、Pagesにデプロイするジョブは常にmainを実行元とする設計です。develop自身からの直接デプロイは行いません。こうすることでブランチ保護ルールを緩める必要がありません。
 
-- **トリガー**: 対象ブランチ（例: `main`）への push 時に実行
-- **ジョブの流れ**:
-  1. Node 20 で実行環境をセットアップ
-  2. pnpm をセットアップし、`pnpm install --frozen-lockfile` で依存関係をインストール
-  3. `pnpm build` でビルド（出力は `dist/`）
-  4. ビルド成果物を GitHub Pages 用にアップロード・デプロイ（`actions/upload-pages-artifact` と `actions/deploy-pages` を利用）
+## 設定
 
-GitHub の Settings → Pages で、**Source** を「GitHub Actions」にしておくと、上記ワークフローでデプロイされた内容が `https://naoiw.github.io/sudoku-solver` に反映されます。公開元ブランチは「GitHub Actions」を選んだ場合は不要で、Actions の成果物がそのまま配信されます。
+GitHub Settings → Pages → Build and deployment → Source は `GitHub Actions` に設定します。
 
-## デプロイの流れ
+`deploy-pages.yml` はデフォルトブランチ（main）にも存在している必要があります。GitHubの `workflow_run` トリガーはデフォルトブランチ上のワークフローにのみ適用されるためです。
 
-上記の GitHub Actions ワークフローにより、`main` ブランチへ push するたびにビルド〜デプロイが自動で実行され、[https://naoiw.github.io/sudoku-solver](https://naoiw.github.io/sudoku-solver) に数独ソルバーアプリの最新版が反映されます。
+PRへの更新時に `check.yml` が別途テスト・ビルドを実行します。
+
+## 注意事項
+
+- developの更新に合わせて最新のmainも再ビルドします。mainのソース自体は変更されません。
+- 直接アクセス可能な開発プレビューURLなので、未公開の秘密情報をdevelopのフロントエンドに含めないでください。
+- `github-pages` の環境保護設定はmainのまま維持してください。

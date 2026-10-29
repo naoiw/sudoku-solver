@@ -1,186 +1,136 @@
-import { useState, useCallback } from 'react'
-import { isCellInvalid, hasAnyInvalidCell } from './sudokuValidation'
-import { solve } from './sudokuSolver'
-
-const EMPTY_GRID: (number | null)[][] = Array.from({ length: 9 }, () =>
-  Array(9).fill(null)
-)
-
-const EMPTY_SOLVER_FILLED: boolean[][] = Array.from({ length: 9 }, () =>
-  Array(9).fill(false)
-)
-
-type SelectedCell = { row: number; col: number } | null
+import { SudokuBoard } from './components/SudokuBoard'
+import { NumberPad } from './components/NumberPad'
+import { useSudoku } from './hooks/useSudoku'
 
 function App() {
-  const [grid, setGrid] = useState<(number | null)[][]>(() =>
-    EMPTY_GRID.map((row) => [...row])
-  )
-  const [solverFilledCells, setSolverFilledCells] = useState<boolean[][]>(() =>
-    EMPTY_SOLVER_FILLED.map((row) => [...row])
-  )
-  const [solveError, setSolveError] = useState<string | null>(null)
-  const [selectedCell, setSelectedCell] = useState<SelectedCell>(null)
+  const {
+    grid, solverCells, status, selected, setSelected, setCell,
+    solvePuzzle, clearSolution, reset,
+    invalidCells, invalidCount, givenCount, solvedCount, canSolve,
+  } = useSudoku()
 
-  const handleSolve = useCallback(() => {
-    const solution = solve(grid)
-    if (solution !== null) {
-      setGrid(solution)
-      setSolverFilledCells(
-        grid.map((row, r) =>
-          row.map((_, c) => grid[r][c] === null && solution[r][c] != null)
-        )
-      )
-      setSolveError(null)
-    } else {
-      setSolveError('解が存在しません')
-    }
-  }, [grid])
+  const isSolved = status === 'solved'
+  const isUnsolvable = status === 'unsolvable'
+  const boardCount = givenCount + solvedCount
 
-  const handleClear = useCallback(() => {
-    setGrid((prev) =>
-      prev.map((row, r) =>
-        row.map((val, c) =>
-          solverFilledCells[r][c] ? null : val
-        )
-      )
-    )
-    setSolverFilledCells(EMPTY_SOLVER_FILLED.map((row) => [...row]))
-    setSolveError(null)
-  }, [solverFilledCells])
-
-  const handleReset = useCallback(() => {
-    setGrid(EMPTY_GRID.map((row) => [...row]))
-    setSolverFilledCells(EMPTY_SOLVER_FILLED.map((row) => [...row]))
-    setSolveError(null)
-    setSelectedCell(null)
-  }, [])
-
-  const handleCellInputChange = useCallback(
-    (row: number, col: number, e: React.ChangeEvent<HTMLInputElement>) => {
-      const v = e.target.value
-      if (v === '') {
-        setGrid((prev) => {
-          const next = prev.map((r) => [...r])
-          next[row][col] = null
-          return next
-        })
-        setSolverFilledCells((prev) => {
-          const next = prev.map((r) => [...r])
-          next[row][col] = false
-          return next
-        })
-        return
-      }
-      const last = v.slice(-1)
-      const n = parseInt(last, 10)
-      if (n >= 1 && n <= 9) {
-        setGrid((prev) => {
-          const next = prev.map((r) => [...r])
-          next[row][col] = n
-          return next
-        })
-        setSolverFilledCells((prev) => {
-          const next = prev.map((r) => [...r])
-          next[row][col] = false
-          return next
-        })
-      } else {
-        setGrid((prev) => {
-          const next = prev.map((r) => [...r])
-          next[row][col] = null
-          return next
-        })
-        setSolverFilledCells((prev) => {
-          const next = prev.map((r) => [...r])
-          next[row][col] = false
-          return next
-        })
-      }
-    },
-    []
-  )
-
-  const handleCellInputKeyDown = useCallback(
-    (row: number, col: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === '0' || e.key === ' ' || e.key === 'Delete' || e.key === 'Backspace') {
-        e.preventDefault()
-        setGrid((prev) => {
-          const next = prev.map((r) => [...r])
-          next[row][col] = null
-          return next
-        })
-        setSolverFilledCells((prev) => {
-          const next = prev.map((r) => [...r])
-          next[row][col] = false
-          return next
-        })
-      }
-    },
-    []
-  )
+  const statusText = invalidCount > 0
+    ? '行・列・3×3ブロックに同じ数字があります。赤いマスを修正してください。'
+    : isUnsolvable
+      ? 'この盤面には解がありません。入力した数字を確認してください。'
+      : isSolved
+        ? '解答が完成しました。青い数字が自動で埋めたマスです。'
+        : givenCount === 0
+          ? '盤面に数字を入力してください。'
+          : '入力中です。数字を入れ終わったら「解答する」を押してください。'
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1 className="app-title">sudoku-solver</h1>
-        <p className="app-description">solveボタンを押すと数独の盤面を解きます</p>
-      </header>
-      <div className="app-main">
-        <div className="board-wrapper">
-          <div className="board" role="grid" aria-label="数独の盤面">
-          {grid.map((row, rowIndex) =>
-            row.map((value, colIndex) => (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                className={`cell ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''} ${isCellInvalid(grid, rowIndex, colIndex) ? 'invalid' : ''} ${solverFilledCells[rowIndex][colIndex] ? 'solver-filled' : ''} ${colIndex === 2 || colIndex === 5 ? 'block-right' : ''} ${rowIndex === 2 || rowIndex === 5 ? 'block-bottom' : ''}`}
-                role="gridcell"
-                aria-selected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
-                aria-invalid={isCellInvalid(grid, rowIndex, colIndex) ? true : undefined}
-              >
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={value != null ? String(value) : ''}
-                  onChange={(e) => handleCellInputChange(rowIndex, colIndex, e)}
-                  onKeyDown={(e) => handleCellInputKeyDown(rowIndex, colIndex, e)}
-                  onFocus={() => setSelectedCell({ row: rowIndex, col: colIndex })}
-                  aria-label={`${rowIndex + 1} 行 ${colIndex + 1} 列`}
-                />
-              </div>
-            ))
-          )}
+    <div className="app-shell">
+      <header className="site-header">
+        <div className="brand-lockup">
+          <div className="brand-icon" aria-hidden="true">
+            <span /><span /><span /><span /><span /><span /><span /><span /><span />
+          </div>
+          <div>
+            <div className="brand-name">SUDOKU <span>STUDIO</span></div>
+            <div className="brand-caption">数独ソルバー</div>
           </div>
         </div>
-        <div className="buttons">
-        <button
-          type="button"
-          className="solve"
-          disabled={hasAnyInvalidCell(grid)}
-          title={hasAnyInvalidCell(grid) ? '不正な入力があります' : '解を求める'}
-          onClick={handleSolve}
-        >
-          Solve
-        </button>
-        <button
-          type="button"
-          className="clear"
-          title="ソルバーが埋めた数字だけを削除"
-          onClick={handleClear}
-          disabled={!solverFilledCells.some((row) => row.some(Boolean))}
-        >
-          Clear
-        </button>
-        <button type="button" onClick={handleReset}>
-          Reset
-        </button>
-        {solveError != null && (
-          <p className="solve-error" role="alert">
-            {solveError}
-          </p>
-        )}
+      </header>
+
+      <main>
+        <div className="page-heading">
+          <h1>数独ソルバー</h1>
         </div>
-      </div>
+
+        <div className="workspace">
+          <section className="board-card" aria-labelledby="board-title">
+            <div className="board-card-heading">
+              <div>
+                <div className="panel-kicker">YOUR PUZZLE</div>
+                <h2 id="board-title">数独の盤面</h2>
+              </div>
+              <div className="progress-chip" aria-label={'入力済み ' + String(boardCount) + ' / 81 マス'}>
+                <span className="progress-dot" />
+                {boardCount} <span>/ 81</span>
+              </div>
+            </div>
+
+            <SudokuBoard
+              grid={grid}
+              solverCells={solverCells}
+              invalidCells={invalidCells}
+              selected={selected}
+              onSelect={setSelected}
+              onDigit={setCell}
+            />
+
+            <div className="board-meta">
+              <div className="legend">
+                <span><i className="legend-dot manual-dot" />入力した数字</span>
+                <span><i className="legend-dot answer-dot" />解答した数字</span>
+                <span><i className="legend-dot error-dot" />重複</span>
+              </div>
+              <span className="board-helper">マスを選択して数字を入力</span>
+            </div>
+          </section>
+
+          <aside className="side-panel" aria-label="操作パネル">
+            <section className="panel-section intro-section">
+              <div className="panel-kicker">01 / SOLVE</div>
+              <h2>解答を求める</h2>
+              <p className="section-description">入力した盤面から、数独の解を自動で探します。</p>
+              <button
+                type="button"
+                className="primary-button"
+                onClick={solvePuzzle}
+                disabled={!canSolve}
+              >
+                <span aria-hidden="true">✦</span>
+                {isSolved ? '解答済み' : '解答する'}
+                <span className="primary-arrow" aria-hidden="true">→</span>
+              </button>
+              <div
+                className={'feedback ' + (invalidCount > 0 || isUnsolvable ? 'feedback-error' : isSolved ? 'feedback-success' : '')}
+                role={invalidCount > 0 || isUnsolvable ? 'alert' : 'status'}
+                aria-live="polite"
+              >
+                <span className="feedback-symbol" aria-hidden="true">{invalidCount > 0 || isUnsolvable ? '!' : isSolved ? '✓' : 'i'}</span>
+                <p>{statusText}</p>
+              </div>
+            </section>
+
+            <section className="panel-section keypad-section">
+              <div className="panel-title-row">
+                <div>
+                  <div className="panel-kicker">02 / INPUT</div>
+                  <h2>数字を入力</h2>
+                </div>
+                <span className="selected-coordinate">{selected.row + 1}行 {selected.col + 1}列</span>
+              </div>
+              <NumberPad onDigit={(value) => setCell(selected.row, selected.col, value)} />
+            </section>
+
+            <section className="panel-section actions-section">
+              <div className="panel-kicker">03 / TOOLS</div>
+              <h2>盤面の操作</h2>
+              <div className="tool-buttons">
+                <button type="button" className="tool-button" onClick={clearSolution} disabled={solvedCount === 0}>
+                  <span aria-hidden="true">↶</span> 解答だけ消去
+                </button>
+                <button type="button" className="tool-button" onClick={reset} disabled={boardCount === 0}>
+                  <span aria-hidden="true">⟲</span> すべて消去
+                </button>
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        <div className="bottom-note">
+          <span className="note-symbol" aria-hidden="true">⌨</span>
+          <p><strong>キーボード操作：</strong> 矢印キーでマスを移動、1〜9で入力、0・Backspace・Deleteで消去できます。</p>
+        </div>
+      </main>
+
     </div>
   )
 }
