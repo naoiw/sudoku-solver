@@ -61,13 +61,13 @@ git push origin develop
 
 ## CI
 
-- `.github/workflows/check.yml` : PR (`develop` → `main`) と再利用ワークフロー用の共通チェック定義
-- `.github/workflows/validate-develop.yml` : `develop` push時に共通チェックを呼び出す
-- `.github/workflows/deploy-pages.yml` : `main` と `develop` の両方を GitHub Pages に配置
+- `.github/workflows/validate-develop.yml`：developへのpushおよびmain/develop宛PRのテストとビルド。PRでは公開しない。
+- `.github/workflows/deploy-pages.yml`：mainへのpush、またはdevelopのpush検証成功後に、両ブランチを公開。
+- デプロイはmain側のワークフローからのみ実行し、Pagesの環境は`github-pages`に統一する。
+- `workflow_run`の起動時は検証済みdevelopのコミットSHAをcheckoutし、両ブランチの成果物を公開前に再テストする。
+- 古い検証実行はキャンセルできる一方、Pagesのデプロイ処理は順次実行する。
 
-開発版の公開は `Validate develop` の成功をトリガーとするため、ワークフロー名はデプロイ設定と対応させて維持してください。
-
-GitHub Pagesはmainのみをデプロイ実行元として使い、プレビューには最新のdevelopを同梱します。詳細は [DEPLOYMENT.md](DEPLOYMENT.md) を参照してください。
+公開構成と設定については[DEPLOYMENT.md](DEPLOYMENT.md)を参照してください。
 
 ## 実装メモ
 

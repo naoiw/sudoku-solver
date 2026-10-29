@@ -1,7 +1,7 @@
 name: Deploy to GitHub Pages
 
-# Deployments always run from main so github-pages branch protections remain intact.
-# One artifact contains main at / and develop at /develop/.
+# Run from main to preserve the protected github-pages environment.
+# A single artifact contains production at / and preview at /develop/.
 on:
   push:
     branches: [main]
@@ -20,29 +20,32 @@ concurrency:
 
 jobs:
   build:
-    # Do not publish a failed develop check.
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' && github.ref_name == 'main') ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main
+      - name: Checkout production
         uses: actions/checkout@v4
         with:
           ref: main
           path: production
 
-      - name: Checkout develop
+      - name: Checkout validated preview revision
         uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'develop' }}
           path: preview
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 9.14.2
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
@@ -50,34 +53,29 @@ jobs:
             production/pnpm-lock.yaml
             preview/pnpm-lock.yaml
 
-      - name: Install production dependencies
+      - name: Test and build production
         working-directory: production
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm test
+          pnpm build
 
-      - name: Install preview dependencies
+      - name: Test and build preview
         working-directory: preview
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm test
+          pnpm exec tsc -b
+          pnpm exec vite build --base=/sudoku-solver/develop/
 
-      - name: Build production
-        working-directory: production
-        run: pnpm build
-
-      - name: Typecheck preview
-        working-directory: preview
-        run: pnpm exec tsc -b
-
-      - name: Build preview
-        working-directory: preview
-        run: pnpm exec vite build --base=/sudoku-solver/develop/
-
-      - name: Combine sites into one artifact
+      - name: Combine sites
         run: |
           mkdir -p publish/develop
           cp -a production/dist/. publish/
           cp -a preview/dist/. publish/develop/
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: publish
 
@@ -85,16 +83,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
