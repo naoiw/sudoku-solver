@@ -97,15 +97,21 @@ button:disabled { cursor: not-allowed; }
   .board-card { padding: 20px; }
   .panel-section { padding: 22px; }
 }
+/* Reuse the same keypad in both layouts without affecting desktop placement. */
+.mobile-number-pad { display: none; }
+
 @media (max-width: 760px) {
   .site-header { height: 78px; }
   .page-heading { padding: 27px 0 19px; }
   .workspace { grid-template-columns: 1fr; }
   .board-card { max-width: 620px; width: 100%; margin: 0 auto; }
-  .side-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .intro-section { grid-column: 1 / -1; }
-  .panel-section + .panel-section { border-top: 1px solid #eef0f5; }
-  .actions-section { border-left: 1px solid #eef0f5; }
+  .side-panel { display: block; }
+  .keypad-section { display: none; }
+  .mobile-number-pad { display: block; margin-top: 14px; }
+  .mobile-input-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; font-weight: 700; color: #56637b; }
+  .mobile-number-pad .number-pad { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 5px; }
+  .mobile-number-pad .digit-button { min-width: 0; min-height: 48px; font-size: 18px; touch-action: manipulation; }
+  .mobile-number-pad .erase-button { min-height: 40px; grid-column: 1 / -1; touch-action: manipulation; }
   .bottom-note { margin-bottom: 40px; }
 }
 @media (max-width: 520px) {
@@ -123,10 +129,14 @@ button:disabled { cursor: not-allowed; }
   .board-meta { padding: 0 5px; }
   .legend { gap: 10px; }
   .board-helper { display: none; }
-  .side-panel { display: block; border-radius: 13px; }
+  .side-panel { border-radius: 13px; }
   .panel-section { padding: 22px; }
-  .actions-section { border-left: 0; }
-  .digit-button { min-height: 52px; }
+  /* Five keys per row keep targets large even on narrow phones. */
+  .mobile-number-pad .number-pad { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
+  .mobile-number-pad .digit-button, .mobile-number-pad .erase-button { min-height: 48px; }
+  .mobile-number-pad .erase-button { grid-column: auto; font-size: 0; }
+  .mobile-number-pad .erase-button span { font-size: 22px; }
+  .mobile-number-pad { margin-top: 12px; }
   .bottom-note { margin: 20px 5px 32px; }
 }
 @media (prefers-reduced-motion: reduce) {
