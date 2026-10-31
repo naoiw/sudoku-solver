@@ -30,10 +30,7 @@ function App() {
           <div className="brand-icon" aria-hidden="true">
             <span /><span /><span /><span /><span /><span /><span /><span /><span />
           </div>
-          <div>
-            <div className="brand-name">SUDOKU <span>STUDIO</span></div>
-            <div className="brand-caption">数独ソルバー</div>
-          </div>
+          <div className="brand-name">SUDOKU <span>SOLVER</span></div>
         </div>
       </header>
 
@@ -140,7 +137,7 @@ function App() {
       </main>
 
       <footer className="site-footer">
-        <span>SUDOKU STUDIO</span>
+        <span>SUDOKU SOLVER</span>
         <a href="https://github.com/naoiw/sudoku-solver" target="_blank" rel="noopener noreferrer" aria-label="GitHubでソースコードを開く">GitHub ↗</a>
       </footer>
     </div>
