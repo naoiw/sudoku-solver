@@ -139,6 +139,10 @@ function App() {
         </div>
       </main>
 
+      <footer className="site-footer">
+        <span>SUDOKU STUDIO</span>
+        <a href="https://github.com/naoiw/sudoku-solver" target="_blank" rel="noopener noreferrer" aria-label="GitHubでソースコードを開く">GitHub ↗</a>
+      </footer>
     </div>
   )
 }
