@@ -28,7 +28,6 @@ button:disabled { cursor: not-allowed; }
 .brand-icon span:nth-child(5) { background: #a9bbff; }
 .brand-name { font-size: var(--chrome-brand-size); font-weight: 800; letter-spacing: .02em; color: #182543; }
 .brand-name span { color: #526cc3; }
-.brand-caption { font-size: var(--chrome-caption-size); color: #8490a4; font-weight: 700; letter-spacing: .12em; margin-top: 3px; }
 .page-heading { padding: 36px 0 24px; }
 .panel-kicker { font-size: 11px; font-weight: 800; letter-spacing: .14em; color: #5a70c1; }
 .page-heading h1 { font-size: clamp(24px, 2.8vw, 34px); line-height: 1.3; letter-spacing: -.04em; margin: 0; color: #192642; }
