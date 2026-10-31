@@ -90,6 +90,9 @@ button:disabled { cursor: not-allowed; }
 .bottom-note { display: flex; align-items: flex-start; gap: 11px; margin: 25px 1px 36px; }
 .bottom-note p { font-size: 12px; line-height: 1.9; color: #8d96a8; margin: 0; }
 .bottom-note strong { color: #66738a; }
+.site-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid #e1e5ed; padding: 22px 0; color: #8490a4; font-size: 12px; font-weight: 600; }
+.site-footer a { color: #526bc0; text-decoration: none; white-space: nowrap; }
+.site-footer a:hover { text-decoration: underline; }
 .note-symbol { font-size: 21px; color: #8c9abe; }
 @media (max-width: 1000px) {
   .app-shell { padding: 0 24px; }
