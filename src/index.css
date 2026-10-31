@@ -1,7 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
-
 :root {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+  /* Keep these site-chrome tokens aligned across the five naoiw sites. */
+  --chrome-font: Inter, "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, system-ui, sans-serif;
+  --chrome-width: 1180px;
+  --chrome-gutter: 28px;
+  --chrome-header-height: 78px;
+  --chrome-brand-size: 16px;
+  --chrome-caption-size: 11px;
+  --chrome-footer-size: 12px;
+  font-family: var(--chrome-font);
   color: #25314a;
   background: #f6f7fb;
   font-synthesis: none;
@@ -14,15 +20,14 @@ body { margin: 0; min-width: 320px; }
 button { font: inherit; }
 button:focus-visible { outline: 3px solid #667ddd; outline-offset: 3px; }
 button:disabled { cursor: not-allowed; }
-.app-shell { max-width: 1250px; padding: 0 42px; margin: 0 auto; }
-.site-header { height: 98px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e1e5ed; }
-.brand-lockup { display: flex; align-items: center; gap: 14px; }
-.brand-icon { display: grid; grid-template-columns: repeat(3, 6px); gap: 5px; background: #344b92; padding: 14px; border-radius: 12px; box-shadow: 0 7px 14px #344b9223; }
+.app-shell { max-width: var(--chrome-width); padding: 0 var(--chrome-gutter); margin: 0 auto; }
+.site-header { min-height: var(--chrome-header-height); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e1e5ed; }
+.brand-lockup { display: flex; align-items: center; gap: 11px; }
+.brand-icon { display: grid; grid-template-columns: repeat(3, 6px); gap: 3px; width: 36px; height: 36px; background: #344b92; padding: 6px; border-radius: 10px; box-shadow: 0 7px 14px #344b9223; }
 .brand-icon span { display: block; width: 6px; height: 6px; border-radius: 2px; background: #e6edff; }
 .brand-icon span:nth-child(5) { background: #a9bbff; }
-.brand-name { font-size: 16px; font-weight: 800; letter-spacing: .08em; color: #182543; }
+.brand-name { font-size: var(--chrome-brand-size); font-weight: 800; letter-spacing: .02em; color: #182543; }
 .brand-name span { color: #526cc3; }
-.brand-caption { font-size: 11px; color: #8490a4; font-weight: 700; letter-spacing: .08em; margin-top: 3px; }
 .page-heading { padding: 36px 0 24px; }
 .panel-kicker { font-size: 11px; font-weight: 800; letter-spacing: .14em; color: #5a70c1; }
 .page-heading h1 { font-size: clamp(24px, 2.8vw, 34px); line-height: 1.3; letter-spacing: -.04em; margin: 0; color: #192642; }
@@ -90,12 +95,12 @@ button:disabled { cursor: not-allowed; }
 .bottom-note { display: flex; align-items: flex-start; gap: 11px; margin: 25px 1px 36px; }
 .bottom-note p { font-size: 12px; line-height: 1.9; color: #8d96a8; margin: 0; }
 .bottom-note strong { color: #66738a; }
-.site-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid #e1e5ed; padding: 22px 0; color: #8490a4; font-size: 12px; font-weight: 600; }
+.site-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid #e1e5ed; padding: 28px 0 32px; color: #8490a4; font-size: var(--chrome-footer-size); font-weight: 500; letter-spacing: .02em; }
 .site-footer a { color: #526bc0; text-decoration: none; white-space: nowrap; }
 .site-footer a:hover { text-decoration: underline; }
 .note-symbol { font-size: 21px; color: #8c9abe; }
 @media (max-width: 1000px) {
-  .app-shell { padding: 0 24px; }
+  .app-shell { padding: 0 var(--chrome-gutter); }
   .workspace { grid-template-columns: minmax(0, 1.2fr) minmax(280px, 1fr); gap: 17px; }
   .board-card { padding: 20px; }
   .panel-section { padding: 22px; }
@@ -104,7 +109,6 @@ button:disabled { cursor: not-allowed; }
 .mobile-number-pad { display: none; }
 
 @media (max-width: 760px) {
-  .site-header { height: 78px; }
   .page-heading { padding: 27px 0 19px; }
   .workspace { grid-template-columns: 1fr; }
   .board-card { max-width: 620px; width: 100%; margin: 0 auto; }
@@ -118,10 +122,7 @@ button:disabled { cursor: not-allowed; }
   .bottom-note { margin-bottom: 40px; }
 }
 @media (max-width: 520px) {
-  .app-shell { padding: 0 13px; }
-  .site-header { height: 69px; }
-  .brand-icon { padding: 10px; gap: 4px; }
-  .brand-name { font-size: 13px; }
+  .app-shell { padding: 0 var(--chrome-gutter); }
   .page-heading { padding: 22px 5px 17px; }
   .page-heading h1 { font-size: 24px; }
   .board-card { padding: 15px 10px 16px; border-radius: 13px; }
@@ -144,4 +145,9 @@ button:disabled { cursor: not-allowed; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
+}
+
+/* Shared mobile site-chrome sizing. */
+@media (max-width: 620px) {
+  :root { --chrome-gutter: 17px; --chrome-header-height: 67px; }
 }

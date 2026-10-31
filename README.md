@@ -1,4 +1,4 @@
-# SUDOKU STUDIO
+# SUDOKU SOLVER
 
 React と TypeScript で作ったブラウザ数独ソルバーです。9×9の盤面を入力し、重複チェックと解答の自動計算ができます。
 
