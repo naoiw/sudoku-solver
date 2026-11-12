@@ -2,7 +2,7 @@
 
 ## 起動
 
-Node.js 20 / pnpm 9 を使用。
+Node.js 26 / pnpm 9 を使用。
 
 ```bash
 pnpm install --frozen-lockfile

@@ -23,13 +23,13 @@ React と TypeScript で作ったブラウザ数独ソルバーです。9×9の�
 
 - **TypeScript / React 18** — アプリケーションロジック・画面構成
 - **CSS / Vite** — スタイル・開発サーバー・ビルド
-- **Node.js 20 / pnpm 9** — 開発・ビルド
+- **Node.js 26 / pnpm 9** — 開発・ビルド
 - **GitHub Actions / GitHub Pages** — テスト・デプロイ
 
 ## ローカル開発
 
 ```bash
-corepack enable
+npm install --global pnpm@9.14.2
 pnpm install --frozen-lockfile
 pnpm dev    # 開発サーバーを起動
 pnpm test   # 自動テスト
